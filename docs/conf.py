@@ -35,7 +35,7 @@ except ImportError:
     from sphinx import apidoc
 
 output_dir = os.path.join(__location__, "api")
-module_dir = os.path.join(__location__, "../src/laguro")
+module_dir = os.path.join(__location__, "../src/ltfx")
 try:
     shutil.rmtree(output_dir)
 except FileNotFoundError:
@@ -61,7 +61,7 @@ except Exception as e:
 # If your documentation needs a minimal Sphinx version, state it here.
 # needs_sphinx = '1.0'
 
-# Add any Sphinx extension module names here, as strings. They can be extensions
+# Add any Sphinx extension backend names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
               'sphinx.ext.autosummary', 'sphinx.ext.viewcode', 'sphinx.ext.coverage',
@@ -81,7 +81,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'laguro'
+project = u'ltfx'
 copyright = u'2019, Danilo Nunes'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -113,7 +113,7 @@ exclude_patterns = ['_build']
 # If true, '()' will be appended to :func: etc. cross-reference text.
 # add_function_parentheses = True
 
-# If true, the current module name will be prepended to all description
+# If true, the current backend name will be prepended to all description
 # unit titles (such as .. function::).
 # add_module_names = True
 
@@ -124,7 +124,7 @@ exclude_patterns = ['_build']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
-# A list of ignored prefixes for module index sorting.
+# A list of ignored prefixes for backend index sorting.
 # modindex_common_prefix = []
 
 # If true, keep warnings as "system message" paragraphs in the built documents.
@@ -189,7 +189,7 @@ html_static_path = ['_static']
 # template names.
 # html_additional_pages = {}
 
-# If false, no module index is generated.
+# If false, no backend index is generated.
 # html_domain_indices = True
 
 # If false, no index is generated.
@@ -216,7 +216,7 @@ html_static_path = ['_static']
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'laguro-doc'
+htmlhelp_basename = 'ltfx-doc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -235,7 +235,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'user_guide.tex', u'laguro Documentation',
+  ('index', 'user_guide.tex', u'ltfx Documentation',
    u'Danilo Nunes', 'manual'),
 ]
 
@@ -256,7 +256,7 @@ latex_documents = [
 # Documents to append as an appendix to all manuals.
 # latex_appendices = []
 
-# If false, no module index is generated.
+# If false, no backend index is generated.
 # latex_domain_indices = True
 
 # -- External mapping ------------------------------------------------------------
