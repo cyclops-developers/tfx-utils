@@ -1,5 +1,5 @@
 import tensorflow as tf
-from ltfx.common import ClassificationConfig, transform_name
+from ltfx.common import ClassificationConfig
 from ltfx.preprocessing.image import read_tensor_from_image_file
 from ltfx.preprocessing.label import label_to_one_hot
 from ltfx.functions.train import train_fn

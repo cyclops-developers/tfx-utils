@@ -1,5 +1,5 @@
 import tensorflow as tf
-from ltfx.common import gzip_reader_fn, transform_name, ClassificationConfig
+from ltfx.common import gzip_reader_fn, ClassificationConfig
 
 
 def input_fn(filenames, transform_output, batch_size):

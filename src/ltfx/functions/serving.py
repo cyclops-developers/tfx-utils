@@ -1,5 +1,5 @@
 import tensorflow as tf
-from ltfx.common import get_raw_feature_spec, transform_name, ClassificationConfig
+from ltfx.common import get_raw_feature_spec, ClassificationConfig
 
 
 def serving_receiver_fn(transform_output, schema):

@@ -1,6 +1,6 @@
 import tensorflow as tf
 import tensorflow_model_analysis as tfma
-from ltfx.common import get_raw_feature_spec, transform_name, ClassificationConfig
+from ltfx.common import get_raw_feature_spec, ClassificationConfig
 
 
 def eval_input_receiver_fn(transform_output, schema):
