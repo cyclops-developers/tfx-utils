@@ -1,0 +1,10 @@
+include CHANGELOG.rst
+include LICENSE.txt
+include MANIFEST.in
+include README.rst
+include tlfx/VERSION
+recursive-include docs *
+recursive-include tests *
+global-exclude __pycache__
+global-exclude *.py[co]
+prune docs/build

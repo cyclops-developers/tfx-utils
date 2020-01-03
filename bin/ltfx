@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+# coding=utf-8
+
+from __future__ import print_function
+
+import sys
+import os.path
+
+from ltfx.management.config import find_inidir, parse_ini
+from ltfx.management import create_cli
+
+# Find the ini directory
+inifilename = 'ltfx.ini'
+inidir = find_inidir(inifilename)
+if not inidir:
+    print("ERROR: ltfx.ini file '{}' not found".format(inifilename))
+    sys.exit(1)
+
+# Load the ini file
+inipath = os.path.join(inidir, inifilename)
+config_defaults =  {
+    'inidir': inidir,
+    'ltfx_packagedir': '{inidir}/{ltfx_package}',
+}
+config = parse_ini(inipath, config_defaults)
+
+package_name = config['ltfx_package']
+package_path = config['ltfx_packagedir']
+
+type_ = config.get('ltfx_type', None)
+
+exclude_commands = config.get('ltfx_exclude', None)
+
+cli = create_cli(package_name, package_path, type_=type_, exclude=exclude_commands, config=config)
+
+cli()
