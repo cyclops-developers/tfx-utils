@@ -1,4 +1,4 @@
-Laguro TFX utils v0.0.1
+Laguro TFX utils v0.0.2
 =======================
 
 Description
