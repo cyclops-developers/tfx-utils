@@ -59,8 +59,8 @@ def bumpversion(ctx, part, allow_dirty, force, yes):
         if exitcode == 0:
             print('Bump version from {old} to {new}'.format(
                 old=old_version, new=new_version))
-        if yes or click.confirm('Do you want to edit CHANGES.md?'):
-            click.edit(filename=os.path.join(ctx.obj['base_path'], 'CHANGES.md'))
+        if yes or click.confirm('Do you want to edit CHANGELOG.rst?'):
+            click.edit(filename=os.path.join(ctx.obj['base_path'], 'CHANGELOG.rst'))
     sys.exit(exitcode)
 
 
@@ -77,3 +77,12 @@ def tag(ctx):
 @click.pass_context
 def version(ctx):
     print(get_version(ctx.obj['package_path']))
+
+
+@cli.command('run', help='Run pipeline')
+@click.option('--config_file', '-c', help='Configuration file', required=True)
+@click.pass_context
+def run(ctx, config_file):
+    command = ['python', os.path.join(ctx.obj['package_path'], '..', 'src', 'pipeline.py'),
+               '-c', config_file]
+    subprocess.call(command)
