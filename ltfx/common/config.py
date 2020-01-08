@@ -38,9 +38,7 @@ class ClassificationConfig:
         with open(filename, 'r') as fp:
             config = yaml.load(fp)
 
-        os.environ['LTFX_CONFIG_FILE'] = filename
         classification_config = cls()
-
         for key, value in config.get('model', {}).items():
             if hasattr(classification_config, key) and getattr(classification_config, key, None) is not None:
                 old_value = getattr(classification_config, key, None)
