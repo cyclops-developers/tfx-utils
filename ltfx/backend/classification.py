@@ -1,26 +1,35 @@
 import tensorflow as tf
+import tensorflow_transform as tft
+from absl import logging
 from ltfx.common import ClassificationConfig
 from ltfx.preprocessing.image import read_tensor_from_image_file
-from ltfx.preprocessing.label import label_to_one_hot
 from ltfx.functions.train import _train_fn
-from functools import partial
 
 
 def preprocessing_fn(inputs):
+    logging.info("Running preprocessing function")
+
     config = ClassificationConfig.from_env()
 
     outputs = dict()
-    read_tensor = partial(read_tensor_from_image_file, input_height=config.image_height, input_width=config.image_width)
-
-    outputs[config.image_key] = tf.compat.v2.map_fn(read_tensor, inputs[config.raw_image_key].values, dtype=tf.float32)
-
-    one_hot = partial(label_to_one_hot, size=config.number_of_classes)
-    outputs[config.label_key] = tf.compat.v2.map_fn(one_hot, inputs[config.raw_label_key].values, dtype=tf.float32)
+    read_image_blob = lambda x: read_tensor_from_image_file(x,
+                                                            input_height=config.image_height,
+                                                            input_width=config.image_width)
+    # image tensor
+    outputs[config.image_key] = tf.compat.v2.map_fn(read_image_blob,
+                                                    inputs[config.raw_image_key].values,
+                                                    dtype=tf.float32)
+    # label tensor
+    # we store input to output and create a vocabulary to be used later on
+    _ = tft.vocabulary(inputs['label'], vocab_filename="label_encoder")
+    outputs[config.label_key] = inputs[config.raw_label_key]
 
     return outputs
 
 
 def trainer_fn(hparams, schema):
+    logging.info("Running trainer function")
+
     config = ClassificationConfig.from_env()
 
     return _train_fn(hparams, schema,

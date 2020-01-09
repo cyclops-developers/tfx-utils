@@ -5,7 +5,6 @@ import os
 import os.path
 import subprocess
 import click
-import pandas as pd
 
 
 __all__ = ['create_cli']
@@ -21,7 +20,7 @@ def cli():
 def test(ctx,):
     os.environ['TESTING'] = 'true'
     command = ['python', '-m', 'unittest']
-    cwd = os.path.join(ctx.obj['base_path'], '..')
+    cwd = os.path.join(ctx.obj['base_path'])
     print(' '.join(command))
     exitcode = subprocess.call(command, cwd=cwd)
     sys.exit(exitcode)

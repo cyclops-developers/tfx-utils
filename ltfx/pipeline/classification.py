@@ -30,7 +30,8 @@ def create_classification_pipeline(pipeline_name: Text, pipeline_root: Text, dat
                                    direct_num_workers: int = 0,
                                    config_file: str = None) -> pipeline.Pipeline:
 
-    logger.info("Reading config")
+    logger.info("Reading config and updating environment variable")
+    os.environ['LTFX_CONFIG_FILE'] = config_file
     config = ClassificationConfig.from_file(config_file)
 
     logger.info("Creating CSV Example component. Data root %s" % data_root)

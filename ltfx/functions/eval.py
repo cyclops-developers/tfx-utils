@@ -12,7 +12,7 @@ def _eval_input_receiver_fn(transform_output, schema, image_key, label_key):
     features = tf.io.parse_example(serialized=serialized_tf_example, features=feature_spec)
 
     transformed_features = transform_output.transform_raw_features(features)
-    labels = transformed_features.pop(label_key)
+    labels = tf.sparse.to_dense(transformed_features.pop(label_key))
     inputs = {image_key: transformed_features[image_key]}
 
     receiver_tensors = {'examples': serialized_tf_example}

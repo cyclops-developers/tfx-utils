@@ -9,6 +9,6 @@ def _input_fn(filenames, transform_output, batch_size, image_key, label_key):
                                                                  reader=gzip_reader_fn)
 
     transformed_features = tf.compat.v1.data.make_one_shot_iterator(dataset).get_next()
-    labels = transformed_features.pop(label_key)
+    labels = tf.sparse.to_dense(transformed_features.pop(label_key))
     inputs = {image_key: transformed_features[image_key]}
     return inputs, labels
