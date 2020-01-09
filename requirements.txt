@@ -1,6 +1,2 @@
-apache-beam[gcp]==2.16.0
-Click==7.0
+PyYAML==3.13
 tfx==0.15.0
-google-cloud-storage==1.23.0
-google-cloud-bigquery==1.23.0
-prompt-toolkit==2.0.10

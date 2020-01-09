@@ -1,6 +1,7 @@
 import os
 from absl import logging
 from typing import Text
+from ml_metadata.proto import metadata_store_pb2
 from tfx.components import Evaluator
 from tfx.components import CsvExampleGen
 from tfx.components import ImporterNode
@@ -17,18 +18,22 @@ from tfx.proto import pusher_pb2
 from tfx.proto import trainer_pb2
 from tfx.types.standard_artifacts import Schema
 from tfx.utils.dsl_utils import external_input
-from tfx.orchestration import metadata
 from tfx.orchestration import pipeline
 from ltfx.common import ClassificationConfig
 
 
+logging.set_verbosity(logging.DEBUG)
 logger = logging.get_absl_logger()
 
 
 def create_classification_pipeline(pipeline_name: Text, pipeline_root: Text, data_root: Text, schema_path: Text,
-                                   serving_model_dir: Text, metadata_path: Text,
-                                   direct_num_workers: int = 0,
+                                   serving_model_dir: Text,
+                                   metadata_config: metadata_store_pb2.ConnectionConfig,
+                                   module_file: Text,
+                                   beam_pipeline_args: list = None,
                                    config_file: str = None) -> pipeline.Pipeline:
+
+    beam_pipeline_args = beam_pipeline_args or []
 
     logger.info("Reading config and updating environment variable")
     os.environ['LTFX_CONFIG_FILE'] = config_file
@@ -57,17 +62,18 @@ def create_classification_pipeline(pipeline_name: Text, pipeline_root: Text, dat
     example_validator = ExampleValidator(statistics=statistics_gen.outputs['statistics'],
                                          schema=user_schema_importer.outputs['result'])
 
-    import ltfx.backend.classification
-    module_file = ltfx.backend.classification.__file__
+    # import ltfx.backend.classification
+    # module_file = ltfx.backend.classification.__file__
+
     logger.info("Creating Transform component. Backend %s" % module_file)
     transform = Transform(
         examples=example_gen.outputs['examples'],
         schema=user_schema_importer.outputs['result'],
-        module_file=os.path.abspath(module_file))
+        module_file=module_file)
 
     logger.info("Creating Trainer component. Backend %s" % module_file)
     trainer = Trainer(
-      module_file=os.path.abspath(module_file),
+      module_file=module_file,
       examples=transform.outputs['transformed_examples'],
       schema=user_schema_importer.outputs['result'],
       transform_graph=transform.outputs['transform_graph'],
@@ -102,5 +108,5 @@ def create_classification_pipeline(pipeline_name: Text, pipeline_root: Text, dat
         pipeline_root=pipeline_root,
         components=components,
         enable_cache=True,
-        metadata_connection_config=metadata.sqlite_metadata_connection_config(metadata_path),
-        beam_pipeline_args=['--direct_num_workers=%d' % direct_num_workers])
+        metadata_connection_config=metadata_config,
+        beam_pipeline_args=beam_pipeline_args)

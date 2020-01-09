@@ -3,13 +3,14 @@ import os.path
 import sys
 from pkg_resources import VersionConflict, require
 from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
+
 try:
     require('setuptools>=38.3')
 except VersionConflict:
     print("Error: version of setuptools is too old (<38.3)!")
     sys.exit(1)
 
+version = '0.0.2'
 
 PACKAGE_NAME = "ltfx"
 PACKAGE_DESCRIPTION = "Laguro TFX utils"
@@ -21,8 +22,18 @@ URL = "https://github.com/laguro-developers/tfx-utils"
 # External dependencies
 # More info https://pythonhosted.org/setuptools/setuptools.html#declaring-dependencies
 REQUIREMENTS_EXTERNAL = [
-    'Click==7.0',
+    'apache-beam[gcp]<2.17,>=2.16',
     'tfx>=0.15.0',
+    'tensorflow<2.1.0,>=2.0.0',
+    'tensorflow-data-validation>=0.15.0',
+    'tensorflow-estimator<2.1.0,>=2.0.1',
+    'tensorflow-metadata<0.21.0,>=0.15.2',
+    'tensorflow-model-analysis>=0.15.4',
+    'tensorflow-serving-api>=2.0.0',
+    'tensorflow-transform>=0.15.0',
+    'scipy<1.2,>=1.1.0',
+    'tensorboard<2.1.0,>=2.0.0',
+    'prompt-toolkit<2.1.0,>=2.0.10'
 ]
 
 # Test dependencies
@@ -54,16 +65,10 @@ CLASSIFIERS = [
     ]
 
 
-def _get_version():
-    """Return the project version from VERSION file."""
-    with open(os.path.join(os.path.dirname(__file__), PACKAGE_NAME, 'VERSION'), 'rb') as f:
-        version = f.read().decode('ascii').strip()
-    return version
-
 
 setup(
     name=PACKAGE_NAME,
-    version=_get_version(),
+    version=version,
     url=URL,
     description=PACKAGE_DESCRIPTION,
     long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),

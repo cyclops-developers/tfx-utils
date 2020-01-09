@@ -85,4 +85,30 @@ def version(ctx):
 def run(ctx, config_file):
     command = ['python', os.path.join(ctx.obj['package_path'], '..', 'src', 'pipeline.py'),
                '-c', config_file]
+    print(" ".join(command))
     subprocess.call(command)
+
+
+@cli.command('package', help='Package dependencies to run on GCP')
+@click.pass_context
+def package(ctx):
+    setup = os.path.relpath(os.path.join(os.path.dirname(__file__), '..', '..', 'setup.py'))
+    if not os.path.exists(setup):
+        print("Could not find setup.py at %s" % setup)
+    else:
+        command = ['python', setup, 'sdist', '--dist-dir', os.path.join(ctx.obj['package_path'], '..', 'packages')]
+        print(" ".join(command))
+        subprocess.call(command)
+
+
+@cli.command('clean', help='Clean previous pipeline execution')
+@click.option('--yes', '-y', is_flag=False, help='Answer yes to all prompts')
+@click.pass_context
+def clean(ctx, yes):
+    dist_folder = os.path.relpath(os.path.join(ctx.obj['package_path'], '..', 'dist', '*'))
+    command = ['rm', '-rf', dist_folder]
+    if yes or click.confirm('Do you want to clean content from %s' % dist_folder):
+        print(" ".join(command))
+        subprocess.call(command)
+    else:
+        print("Skip.")
