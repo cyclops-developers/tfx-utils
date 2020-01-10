@@ -79,20 +79,31 @@ def version(ctx):
     print(get_version(ctx.obj['package_path']))
 
 
-@cli.command('run', help='Run pipeline')
+@cli.command('run', help='Run pipeline local')
 @click.option('--config_file', '-c', help='Configuration file', required=True)
 @click.pass_context
 def run(ctx, config_file):
-    command = ['python', os.path.join(ctx.obj['package_path'], '..', 'src', 'pipeline.py'),
-               '-c', config_file]
+    command = ['python', os.path.join(ctx.obj['package_path'], 'pipeline.py'),
+               '-c', config_file, '--local']
     print(" ".join(command))
+    subprocess.call(command)
+
+
+@cli.command('deploy', help='Run pipeline on cloud')
+@click.option('--config_file', '-c', help='Configuration file', required=True)
+@click.pass_context
+def deploy(ctx, config_file):
+    command = ['python', os.path.join(ctx.obj['package_path'], 'pipeline.py'),
+               '-c', config_file, '--not-local']
+    print(" ".join(command))
+    print()
     subprocess.call(command)
 
 
 @cli.command('package', help='Package dependencies to run on GCP')
 @click.pass_context
 def package(ctx):
-    setup = os.path.relpath(os.path.join(os.path.dirname(__file__), '..', '..', 'setup.py'))
+    setup = os.path.relpath(os.path.join(os.path.dirname(__file__), '..', 'setup.py'))
     if not os.path.exists(setup):
         print("Could not find setup.py at %s" % setup)
     else:
