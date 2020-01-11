@@ -19,7 +19,6 @@ from tfx.proto import trainer_pb2
 from tfx.types.standard_artifacts import Schema
 from tfx.utils.dsl_utils import external_input
 from tfx.orchestration import pipeline
-from ltfx.common import ClassificationConfig
 
 
 logging.set_verbosity(logging.DEBUG)
@@ -29,15 +28,10 @@ logger = logging.get_absl_logger()
 def create_classification_pipeline(pipeline_name: Text, pipeline_root: Text, data_root: Text, schema_path: Text,
                                    serving_model_dir: Text,
                                    metadata_config: metadata_store_pb2.ConnectionConfig,
-                                   module_file: Text,
-                                   beam_pipeline_args: list = None,
-                                   config_file: str = None) -> pipeline.Pipeline:
+                                   module_file: Text, train_steps: int = 10, eval_steps: int = 10,
+                                   beam_pipeline_args: list = None) -> pipeline.Pipeline:
 
     beam_pipeline_args = beam_pipeline_args or []
-
-    logger.info("Reading config and updating environment variable")
-    os.environ['LTFX_CONFIG_FILE'] = config_file
-    config = ClassificationConfig.from_file(config_file)
 
     logger.info("Creating CSV Example component. Data root %s" % data_root)
     examples = external_input(data_root)
@@ -62,9 +56,6 @@ def create_classification_pipeline(pipeline_name: Text, pipeline_root: Text, dat
     example_validator = ExampleValidator(statistics=statistics_gen.outputs['statistics'],
                                          schema=user_schema_importer.outputs['result'])
 
-    # import ltfx.backend.classification
-    # module_file = ltfx.backend.classification.__file__
-
     logger.info("Creating Transform component. Backend %s" % module_file)
     transform = Transform(
         examples=example_gen.outputs['examples'],
@@ -77,8 +68,8 @@ def create_classification_pipeline(pipeline_name: Text, pipeline_root: Text, dat
       examples=transform.outputs['transformed_examples'],
       schema=user_schema_importer.outputs['result'],
       transform_graph=transform.outputs['transform_graph'],
-      train_args=trainer_pb2.TrainArgs(num_steps=config.train_steps),
-      eval_args=trainer_pb2.EvalArgs(num_steps=config.eval_steps))
+      train_args=trainer_pb2.TrainArgs(num_steps=train_steps),
+      eval_args=trainer_pb2.EvalArgs(num_steps=eval_steps))
 
     logger.info("Creating Evaluator component")
     evaluator = Evaluator(
